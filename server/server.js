@@ -1,7 +1,7 @@
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express'; // const express = require('express');
 import mongoose from 'mongoose';
+import postRoutes from './routes/post.js';
 
 const app = express();
 
@@ -20,13 +20,15 @@ app.use(express.urlencoded( {
 
 app.use(cors());
 
+// When user go to localhost:8080/posts route to get post api.
+app.use('/posts', postRoutes);
+
 const CONNECTION_URL = "mongodb+srv://ndangmernmemoriesproject:ndangmernmemoriesproject123@cluster0.qthwr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const PORT = process.env.PORT || 8080;
 
 // Perform a promise when connection is successful and catch when not successful.
-mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => app.listen(PORT, () => console.log(`The server is running on port: ${PORT}`)))
     .catch((err) => console.log(err.message));
 
 mongoose.set("useFindAndModify", false);
-
