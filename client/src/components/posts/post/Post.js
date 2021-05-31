@@ -8,6 +8,7 @@ import moment from 'moment';
 
 const Post = (props) => {
     const classes = useStyles();
+    
     return (
         <Card className={classes.card}>
             <CardMedia className={classes.media} image={props.post.selectedFile} title={props.post.title} />
@@ -16,13 +17,19 @@ const Post = (props) => {
                 <Typography variant="body2">{moment(props.post.createAt).fromNow()}</Typography>
             </div>
             <div className={classes.overlay2}>
-                <Button style={{color: 'white'}} size='small' onClick={() => {}}>
+                <Button 
+                    style={{color: 'white'}} 
+                    size='small' 
+                    onClick={() => props.setCurrentId(props.post._id)}>
                     <MoreHorizIcon fontSize='default' />
                 </Button>
             </div>
             <div className={classes.details}>
                 <Typography variant='body2' color='textSecondary'>{props.post.tags.map((tag) => `#${tag} `)}</Typography> 
             </div>
+            <CardContent>
+                <Typography className={classes.title} variant='h5' gutterBottom>{props.post.title}</Typography>
+            </CardContent>
             <CardContent>
                 <Typography className={classes.title} variant='h5' gutterBottom>{props.post.message}</Typography>
             </CardContent>
