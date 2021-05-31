@@ -5,7 +5,7 @@ import Posts from './components/posts/Posts';
 import Form from './components/form/Form';
 import useStyles from './styles';
 import { useDispatch } from 'react-redux';
-import { getPosts } from './actions/posts'
+import { getPosts } from './actions/posts';
 
 // Grow to provide some simple animation.
 const App = () => {
