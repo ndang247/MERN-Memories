@@ -2,8 +2,10 @@ import cors from 'cors';
 import express from 'express'; // const express = require('express');
 import mongoose from 'mongoose';
 import postRoutes from './routes/post.js';
+import dotenv from 'dotenv';
 
 const app = express();
+dotenv.config();
 
 // Since this is deprecated, Express now has the function of body-parser built in since V4.16 version. 
 app.use(express.json( {
@@ -23,12 +25,11 @@ app.use(cors());
 // When user go to localhost:8080/posts route to get post api.
 app.use('/posts', postRoutes);
 
-const CONNECTION_URL = "mongodb+srv://ndangmernmemoriesproject:ndangmernmemoriesproject123@cluster0.qthwr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const PORT = process.env.PORT || 8080;
 
 // Perform a promise when connection is successful and catch when not successful.
-mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => app.listen(PORT, () => console.log(`The server is running on port: ${PORT}`)))
-    .catch((err) => console.log(err.message));
+    .catch((error) => console.log(error.message));
 
 mongoose.set("useFindAndModify", false);
