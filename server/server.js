@@ -22,6 +22,10 @@ app.use(express.urlencoded( {
 
 app.use(cors());
 
+app.get('/', (req, res) => {
+    res.send('Hello to Memories API');
+});
+
 // When user go to localhost:8080/posts route to get post api.
 app.use('/posts', postRoutes);
 
