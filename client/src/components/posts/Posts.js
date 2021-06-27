@@ -1,31 +1,24 @@
 import React from 'react';
-import useStyles from './postsStyles';
+import { Grid, CircularProgress } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-// Posts use the Post component.
 import Post from './post/Post';
-import { CircularProgress, Grid } from '@material-ui/core';
+import useStyles from './postsStyles';
 
-// Add a react fragment to allow adding multiple component (to allow adding multiple Post).
-const Posts = (props) => {
-    const classes = useStyles();
-
+const Posts = ({ setCurrentId }) => {
     const posts = useSelector((state) => state.posts);
-    
-    //console.log(posts); // Inspect the posts.
+    const classes = useStyles();
 
     return (
         !posts.length ? <CircularProgress /> : (
-            <Grid className={classes.mainContainer} container alignItems="stretch" spacing={3}>
-                {
-                    posts.map((post) => (
-                        <Grid key={post._id} item xs={12} sm={6}>
-                            <Post post={post} setCurrentId={props.setCurrentId} />
-                        </Grid>
-                    ))
-                }
+            <Grid className={classes.container} container alignItems="stretch" spacing={3}>
+                {posts.map((post) => (
+                    <Grid key={post._id} item xs={12} sm={6} md={6}>
+                        <Post post={post} setCurrentId={setCurrentId} />
+                    </Grid>
+                ))}
             </Grid>
         )
     );
-}
+};
 
 export default Posts;

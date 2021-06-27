@@ -1,19 +1,20 @@
 import cors from 'cors';
 import express from 'express'; // const express = require('express');
 import mongoose from 'mongoose';
-import postRoutes from './routes/post.js';
+import postRouter from './routes/post.js';
 import dotenv from 'dotenv';
+import userRouter from './routes/user.js';
 
 const app = express();
 dotenv.config();
 
 // Since this is deprecated, Express now has the function of body-parser built in since V4.16 version. 
-app.use(express.json( {
+app.use(express.json({
     limit: "30mb",
     extended: true
 }));
 
-app.use(express.urlencoded( {
+app.use(express.urlencoded({
     limit: "30mb",
     extended: true
 }));
@@ -27,7 +28,8 @@ app.get('/', (req, res) => {
 });
 
 // When user go to localhost:8080/posts route to get post api.
-app.use('/posts', postRoutes);
+app.use('/posts', postRouter);
+app.use('/users', userRouter);
 
 const PORT = process.env.PORT || 8080;
 

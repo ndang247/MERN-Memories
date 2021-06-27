@@ -13,28 +13,28 @@ export const getPosts = async (req, res) => {
 
     } catch (error) {
         //console.log(error);
-        res.status(404).json({message: error.message});
+        res.status(404).json({ message: error.message });
     }
 }
 
 export const createPost = async (req, res) => {
     const post = req.body;
-    
-    const newPost = new PostMessage(post);
+
+    const newPostMessage = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
 
     try {
         // Asynchronously save new post to the db.
-        await newPost.save();
+        await newPostMessage.save();
 
         // For inspection and debugging purpose do a console.log().
         //console.log(req.body);
         //console.log(newPost);
 
-        res.status(201).json(newPost);
-        
+        res.status(201).json(newPostMessage);
+
     } catch (error) {
         //console.log(error);
-        res.status(409).json({message: error.message});
+        res.status(409).json({ message: error.message });
     }
 }
 
@@ -44,7 +44,7 @@ export const updatePost = async (req, res) => {
     const id = req.params.id;
 
     const post = req.body;
-    
+
     // For inspection and debugging purpose do a console.log().
     //console.log(req.params);
 
@@ -72,14 +72,26 @@ export const deletePost = async (req, res) => {
 export const likePost = async (req, res) => {
     const id = req.params.id;
 
+    if (!req.userId) {
+        return res.json({ message: "Unauthenticated" });
+    }
+
     // Check if _id is a valid mongoose object id (i.e. the object existed if true).
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post existed with that id: ${id}`);
 
     // Find the existing post by id.
     const post = await PostMessage.findById(id);
 
+    const index = post.likes.findIndex((id) => id === String(req.userId));
+
+    if (index === -1) {
+        post.likes.push(req.userId);
+    } else {
+        post.likes = post.likes.filter((id) => id !== String(req.userId));
+    }
+
     // Then update the like count of this post.
-    const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
-    
+    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+
     res.json(updatedPost);
 }
