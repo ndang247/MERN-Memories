@@ -1,11 +1,17 @@
 import express from 'express';
-// Controllers will handle all http api functions request.
-import { getPosts, createPost, updatePost, deletePost, likePost } from '../controllers/postsController.js';
-import auth from '../middleware/auth.js';
+import {
+    getPostsBySearch, getPosts, createPost, updatePost,
+    deletePost, likePost, getPost
+} from '../controllers/posts.controller.js';
+import auth from '../middleware/auth.middleware.js';
+
 const router = express.Router();
 
-// For localhost:8080/posts/ do a get request from controllers.
+// Don't put router.get('/:id', getPost); first as it will execute first before search.
+// Hence search will not execute when doing searching.
 router.get('/', getPosts);
+router.get('/search', getPostsBySearch);
+router.get('/:id', getPost);
 router.post('/', auth, createPost);
 router.patch('/:id', auth, updatePost);
 router.delete('/:id', auth, deletePost);

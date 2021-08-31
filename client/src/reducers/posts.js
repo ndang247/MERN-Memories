@@ -1,19 +1,32 @@
-import { FETCH_POSTS, CREATE_POST, UPDATE, DELETE } from '../constants/actionType';
+import { FETCH_POSTS, FETCH_POST, LIKE, CREATE_POST, UPDATE, DELETE, FETCH_BY_SEARCH, START_LOADING, END_LOADING } from '../constants/actionType';
 
-// A Reducer is a function accept two parameters: state and action.
-// Based on the action do some logic accordingly and return the state.
-const Reducer = (posts = [], action) => { // In this case the state here is an array post.
-    switch (action.type) { // Action type can be fetch, create, delete or update.
+const Reducer = (state = { isLoading: true, posts: [] }, action) => {
+    switch (action.type) {
+        case START_LOADING:
+            return { ...state, isLoading: true };
+        case END_LOADING:
+            return { ...state, isLoading: false };
         case FETCH_POSTS:
-            return action.payload;
+            return {
+                ...state,
+                posts: action.payload.data,
+                currentPage: action.payload.currentPage,
+                numberOfPages: action.payload.numberOfPages,
+            };
+        case FETCH_BY_SEARCH:
+            return { ...state, posts: action.payload };
+        case FETCH_POST:
+            return { ...state, post: action.payload };
         case CREATE_POST:
-            return [...posts, action.payload];
+            return { ...state, posts: [...state.posts, action.payload] };
         case UPDATE:
-            return posts.map((post) => post._id === action.payload._id ? action.payload : post);
+            return { ...state, posts: state.posts.map((post) => (post._id === action.payload._id ? action.payload : post)) };
         case DELETE:
-            return posts.filter((post) => post._id !== action.payload);
+            return { ...state, posts: state.posts.filter((post) => post._id !== action.payload) };
+        case LIKE:
+            return { ...state, posts: state.posts.map((post) => (post._id === action.payload._id ? action.payload : post)) };
         default:
-            return posts;
+            return state;
     }
 }
 

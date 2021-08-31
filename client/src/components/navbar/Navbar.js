@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from 'react-router-dom';
-import { AppBar, Avatar, Button, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Avatar, Button, Toolbar } from "@material-ui/core";
 import useStyles from './navbarStyles';
-import memories from '../../images/memories.png';
+import memories from '../../images/logo.png';
+import text from '../../images/text.png';
 import { useHistory, useLocation } from "react-router";
 import { useDispatch } from "react-redux";
 import * as actionType from '../../constants/actionType';
@@ -15,13 +16,13 @@ const Navbar = () => {
     const history = useHistory();
     const classes = useStyles();
 
-    const logout = () => {
+    const logout = useCallback(() => {
         dispatch({ type: actionType.LOGOUT });
 
         history.push('/auth');
 
         setUser(null);
-    };
+    }, [dispatch, history]);
 
     useEffect(() => {
         const token = user?.token;
@@ -33,19 +34,19 @@ const Navbar = () => {
         }
 
         setUser(JSON.parse(localStorage.getItem('profile')));
-    }, [location]);
+    }, [location, logout, user?.token]);
 
     return (
         <AppBar className={classes.appBar} position="static" color="inherit">
-            <div className={classes.brandContainer}>
-                <Typography component={Link} to="/" className={classes.heading} variant="h2" align="center">Memories</Typography>
-                <img className={classes.image} src={memories} alt="icon" height="60" />
-            </div>
+            <Link to="/" className={classes.brandContainer}>
+                <img src={text} alt="icon" height="45px" />
+                <img className={classes.image} src={memories} alt="icon" height="40px" />
+            </Link>
             <Toolbar className={classes.toolbar}>
                 {user?.result ? (
                     <div className={classes.profile}>
                         <Avatar className={classes.purple} alt={user?.result.name} src={user?.result.imageUrl}>{user?.result.name.charAt(0)}</Avatar>
-                        <Typography className={classes.userName} variant="h6">{user?.result.name}</Typography>
+                        {/* <Typography className={classes.userName} variant="h6">{user?.result.name}</Typography> */}
                         <Button variant="contained" className={classes.logout} color="secondary" onClick={logout}>Logout</Button>
                     </div>
                 ) : (

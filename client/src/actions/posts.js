@@ -1,86 +1,85 @@
 import * as api from '../api';
-import { FETCH_POSTS, CREATE_POST, UPDATE, DELETE } from '../constants/actionType';
+import { FETCH_POSTS, FETCH_POST, CREATE_POST, UPDATE, DELETE, START_LOADING, END_LOADING, FETCH_BY_SEARCH, LIKE } from '../constants/actionType';
 
-// Actions creators.
-export const getPosts = () => async (dispath) => { // Since we are working with async data make use of redux thunk.
+export const getPost = (id) => async (dispatch) => {
     try {
-        const { data } = await api.fetchPosts();
+        dispatch({ type: START_LOADING });
 
-        const action = {
-            type: FETCH_POSTS,
-            payload: data
-        }
+        const { data } = await api.fetchPost(id);
 
-        dispath(action);
-
+        dispatch({ type: FETCH_POST, payload: data });
+        dispatch({ type: END_LOADING });
     } catch (error) {
         console.log(error);
-        
+    }
+};
+
+export const getPosts = (page) => async (dispatch) => {
+    try {
+        dispatch({ type: START_LOADING });
+        const { data: { data, currentPage, numberOfPages } } = await api.fetchPosts(page);
+
+        dispatch({ type: FETCH_POSTS, payload: { data, currentPage, numberOfPages } });
+        dispatch({ type: END_LOADING });
+    } catch (error) {
+        console.log(error);
     }
 }
 
-export const createPost = (newPost) => async (dispath) => {
+export const createPost = (newPost, history) => async (dispatch) => {
     try {
+        dispatch({ type: START_LOADING });
         const { data } = await api.createPost(newPost);
 
-        const action = {
-            type: CREATE_POST,
-            payload: data
-        }
+        dispatch({ type: CREATE_POST, payload: data });
 
-        dispath(action);
-
+        history.push(`/posts/${data._id}`);
     } catch (error) {
         console.log(error);
-        
     }
 }
 
-export const updatePost = (id, post) => async (dispath) => {
+export const updatePost = (id, post) => async (dispatch) => {
     try {
-        const  { data } = await api.updatePost(id, post);
+        const { data } = await api.updatePost(id, post);
 
-        const action = {
-            type: UPDATE,
-            payload: data
-        }
-
-        dispath(action);
-        
+        dispatch({ type: UPDATE, payload: data });
     } catch (error) {
         console.log(error);
-        
     }
 }
 
-export const deletePost = (id) => async (dispath) => {
+export const deletePost = (id) => async (dispatch) => {
     try {
         await api.deletePost(id);
 
-        const action = {
-            type: DELETE,
-            payload: id
-        }
-
-        dispath(action);
-
+        dispatch({ type: DELETE, payload: id });
     } catch (error) {
         console.log(error);
     }
 }
 
 export const likePost = (id) => async (dispatch) => {
+    const user = JSON.parse(localStorage.getItem('profile'));
+
     try {
-        const { data } = await api.likePost(id);
+        const { data } = await api.likePost(id, user?.token);
 
-        const action = {
-            type: UPDATE,
-            payload: data
-        }
-
-        dispatch(action);
-        
+        dispatch({ type: LIKE, payload: data });
     } catch (error) {
         console.log(error);
     }
 }
+
+export const getPostsBySearch = (searchQuery) => async (dispatch) => {
+    try {
+        dispatch({ type: START_LOADING });
+
+        const { data } = await api.fetchPostsBySearch(searchQuery);
+
+        dispatch({ type: FETCH_BY_SEARCH, payload: data });
+        dispatch({ type: END_LOADING });
+    } catch (error) {
+        console.log(error);
+    }
+};
