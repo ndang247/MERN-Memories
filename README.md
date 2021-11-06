@@ -6,7 +6,7 @@ This is a personal side project.
 
 This is a simple social media to post personal memories. Each post is a card and can contains picture of the memory, title, description and tags.
 
-This application uses React.js with Material UI, React-Redux for state management on the front-end and Node.js and Express.js on the back-end.
+This application uses React.js with Material UI, React-Redux for state management on the front-end, Node.js and Express.js on the back-end and MongoDB Atlas for cloud database.
 ## Running the application front-end
 ### In terminal (linux-based or macOS)
 ### 1. cd to client directory
